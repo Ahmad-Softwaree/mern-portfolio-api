@@ -6,7 +6,15 @@ const ProjectSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
-    title: {
+    enTitle: {
+      type: String,
+      required: [true, "title is required"],
+    },
+    arTitle: {
+      type: String,
+      required: [true, "title is required"],
+    },
+    krTitle: {
       type: String,
       required: [true, "title is required"],
     },

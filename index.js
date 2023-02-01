@@ -9,6 +9,7 @@ import projectApp from "./api/project_api.js";
 import { fileURLToPath } from "url";
 import path from "path";
 import multer from "multer";
+import workApp from "./api/work_api.js";
 dotenv.config();
 const app = express();
 
@@ -22,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: process.env.REACT_HOST,
+    origin: process.env.REACT_LOCAL_HOST,
     optionsSuccessStatus: 200,
   })
 );
@@ -35,12 +36,16 @@ app.use("/public/images/blogs", express.static(path.join(__dirname, "/public/ima
 //project
 app.use("/public/images/projects", express.static(path.join(__dirname, "/public/images/projects")));
 
+//works
+app.use("/public/images/works", express.static(path.join(__dirname, "/public/images/works")));
+
 //use routes
 
 app.use("/api/auth", authApp);
 app.use("/api/user", userApp);
 app.use("/api/blog", blogApp);
 app.use("/api/project", projectApp);
+app.use("/api/work", workApp);
 
 //connect db
 connectDB();
@@ -80,5 +85,22 @@ const projectStorage = multer.diskStorage({
 const projectUploader = multer({ storage: projectStorage });
 
 app.post("/api/upload/project", projectUploader.single("projectImage"), (req, res) => {
+  res.status(200).json("File has been uploaded");
+});
+
+//multer work image
+
+const workStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "public/images/works");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+const workUploader = multer({ storage: workStorage });
+
+app.post("/api/upload/work", workUploader.single("workImage"), (req, res) => {
   res.status(200).json("File has been uploaded");
 });

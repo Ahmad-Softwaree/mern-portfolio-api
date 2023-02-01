@@ -37,15 +37,25 @@ projectApp.get("/:id", async (req, res) => {
 //@access private
 projectApp.post(
   "/",
-  [auth, [body("title", "title is required").not().isEmpty(), body("image", "image is required").not().isEmpty()]],
+  [
+    auth,
+    [
+      body("enTitle", "title is required").not().isEmpty(),
+      body("arTitle", "title is required").not().isEmpty(),
+      body("krTitle", "title is required").not().isEmpty(),
+      body("image", "image is required").not().isEmpty(),
+    ],
+  ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-    let { title, url, image } = req.body;
+    let { enTitle, arTitle, krTitle, url, image } = req.body;
     try {
       const project = new Project({
         user: req.user_id,
-        title,
+        enTitle,
+        arTitle,
+        krTitle,
         url,
         image,
       });
