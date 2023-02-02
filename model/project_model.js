@@ -22,6 +22,10 @@ const ProjectSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    urlName: {
+      type: String,
+      default: "",
+    },
     image: {
       type: String,
       required: [true, "image is required"],

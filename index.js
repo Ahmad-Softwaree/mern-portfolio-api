@@ -10,8 +10,34 @@ import { fileURLToPath } from "url";
 import path from "path";
 import multer from "multer";
 import workApp from "./api/work_api.js";
+
+import auth from "./middleware/auth.js";
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 dotenv.config();
 const app = express();
+
+//firebase
+
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCPteMbdJkNaAEod8Y6WsXZKbyNFt-Nz9g",
+  authDomain: "portfolio-75703.firebaseapp.com",
+  projectId: "portfolio-75703",
+  storageBucket: "portfolio-75703.appspot.com",
+  messagingSenderId: "794760084006",
+  appId: "1:794760084006:web:5ef48f1bd3d2d6cb9304e7",
+  measurementId: "G-CVCWCN0GSE",
+};
+
+// Initialize Firebase
+initializeApp(firebaseConfig);
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -54,6 +80,10 @@ app.listen(process.env.PORT || 3001, () => {
   console.log("Ahmad Software server is running");
 });
 
+const uploader = multer({ storage: multer.memoryStorage() });
+
+const storage = getStorage();
+
 //multer blog storage
 
 const blogStorage = multer.diskStorage({
@@ -67,8 +97,30 @@ const blogStorage = multer.diskStorage({
 
 const blogUploader = multer({ storage: blogStorage });
 
-app.post("/api/upload/blog", blogUploader.single("blogImage"), (req, res) => {
-  res.status(200).json("File has been uploaded");
+app.post("/api/upload/blog", auth, uploader.single("blogImage"), (req, res) => {
+  if (!req.file) return res.status(400).json({ message: "file was not found" });
+
+  const file = req.file;
+  let uploadedFilename = file.originalname.split(".")[0] + "-" + Date.now() + path.extname(file.originalname);
+
+  const storageRef = ref(storage, `blog-images/${uploadedFilename}`);
+
+  const uploadTask = uploadBytesResumable(storageRef, file.buffer);
+
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    },
+    (error) => {
+      res.status(400).json({ warning: error });
+    },
+    () => {
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        res.status(200).json({ message: "uploaded", url: downloadURL });
+      });
+    }
+  );
 });
 
 //multer project image
@@ -84,8 +136,30 @@ const projectStorage = multer.diskStorage({
 
 const projectUploader = multer({ storage: projectStorage });
 
-app.post("/api/upload/project", projectUploader.single("projectImage"), (req, res) => {
-  res.status(200).json("File has been uploaded");
+app.post("/api/upload/project", auth, uploader.single("projectImage"), (req, res) => {
+  if (!req.file) return res.status(400).json({ message: "file was not found" });
+
+  const file = req.file;
+  let uploadedFilename = file.originalname.split(".")[0] + "-" + Date.now() + path.extname(file.originalname);
+
+  const storageRef = ref(storage, `project-images/${uploadedFilename}`);
+
+  const uploadTask = uploadBytesResumable(storageRef, file.buffer);
+
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    },
+    (error) => {
+      res.status(400).json({ warning: "هەڵەیەک هەیە" });
+    },
+    () => {
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        res.status(200).json({ message: "uploaded", url: downloadURL });
+      });
+    }
+  );
 });
 
 //multer work image
@@ -101,6 +175,28 @@ const workStorage = multer.diskStorage({
 
 const workUploader = multer({ storage: workStorage });
 
-app.post("/api/upload/work", workUploader.single("workImage"), (req, res) => {
-  res.status(200).json("File has been uploaded");
+app.post("/api/upload/work", auth, uploader.single("workImage"), (req, res) => {
+  if (!req.file) return res.status(400).json({ message: "file was not found" });
+
+  const file = req.file;
+  let uploadedFilename = file.originalname.split(".")[0] + "-" + Date.now() + path.extname(file.originalname);
+
+  const storageRef = ref(storage, `work-images/${uploadedFilename}`);
+
+  const uploadTask = uploadBytesResumable(storageRef, file.buffer);
+
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    },
+    (error) => {
+      res.status(400).json({ warning: "هەڵەیەک هەیە" });
+    },
+    () => {
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        res.status(200).json({ message: "uploaded", url: downloadURL });
+      });
+    }
+  );
 });

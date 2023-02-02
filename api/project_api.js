@@ -49,7 +49,7 @@ projectApp.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-    let { enTitle, arTitle, krTitle, url, image } = req.body;
+    let { enTitle, arTitle, krTitle, url, image, urlName } = req.body;
     try {
       const project = new Project({
         user: req.user_id,
@@ -57,6 +57,7 @@ projectApp.post(
         arTitle,
         krTitle,
         url,
+        urlName,
         image,
       });
       await project.save();
