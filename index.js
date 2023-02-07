@@ -103,7 +103,7 @@ app.post("/api/upload/blog", auth, uploader.single("blogImage"), (req, res) => {
   const file = req.file;
   let uploadedFilename = file.originalname.split(".")[0] + "-" + Date.now() + path.extname(file.originalname);
 
-  const storageRef = ref(storage, `blog-images/${uploadedFilename}`);
+  const storageRef = ref(storage, `blog-images/${decodeURIComponent(uploadedFilename)}`);
 
   const uploadTask = uploadBytesResumable(storageRef, file.buffer);
 
@@ -142,7 +142,7 @@ app.post("/api/upload/project", auth, uploader.single("projectImage"), (req, res
   const file = req.file;
   let uploadedFilename = file.originalname.split(".")[0] + "-" + Date.now() + path.extname(file.originalname);
 
-  const storageRef = ref(storage, `project-images/${uploadedFilename}`);
+  const storageRef = ref(storage, `project-images/${decodeURIComponent(uploadedFilename)}`);
 
   const uploadTask = uploadBytesResumable(storageRef, file.buffer);
 
@@ -181,7 +181,7 @@ app.post("/api/upload/work", auth, uploader.single("workImage"), (req, res) => {
   const file = req.file;
   let uploadedFilename = file.originalname.split(".")[0] + "-" + Date.now() + path.extname(file.originalname);
 
-  const storageRef = ref(storage, `work-images/${uploadedFilename}`);
+  const storageRef = ref(storage, `work-images/${decodeURIComponent(uploadedFilename)}`);
 
   const uploadTask = uploadBytesResumable(storageRef, file.buffer);
 
