@@ -2,7 +2,6 @@ import Blog from "../model/blog_model.js";
 import express from "express";
 import dotenv from "dotenv";
 import auth from "../middleware/auth.js";
-import { body, validationResult } from "express-validator";
 dotenv.config();
 const blogApp = express.Router();
 

@@ -2,7 +2,6 @@ import express from "express";
 import Project from "../model/project_model.js";
 import dotenv from "dotenv";
 import auth from "../middleware/auth.js";
-import { body, validationResult } from "express-validator";
 dotenv.config();
 
 const projectApp = express.Router();

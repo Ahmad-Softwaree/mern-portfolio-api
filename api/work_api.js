@@ -1,5 +1,4 @@
 import express from "express";
-import { body, validationResult } from "express-validator";
 import auth from "../middleware/auth.js";
 import Work from "../model/work_model.js";
 

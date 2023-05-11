@@ -49,7 +49,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: process.env.REACT_LOCAL_HOST,
+    origin: process.env.REACT_HOST,
     optionsSuccessStatus: 200,
   })
 );
@@ -167,6 +167,32 @@ app.post("/api/upload/project", auth, uploader.single("project"), (req, res) => 
 });
 
 app.post("/api/upload/work", auth, uploader.single("work"), (req, res) => {
+  if (!req.file) return res.status(400).json({ message: "file was not found" });
+
+  const file = req.file;
+  let uploadedFilename = file.originalname.split(".")[0] + "-" + Date.now() + path.extname(file.originalname);
+
+  const storageRef = ref(storage, `work-images/${uploadedFilename}`);
+
+  const uploadTask = uploadBytesResumable(storageRef, file.buffer);
+
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    },
+    (error) => {
+      res.status(400).json({ warning: "هەڵەیەک هەیە" });
+    },
+    () => {
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        res.status(200).json({ message: "uploaded", url: downloadURL });
+      });
+    }
+  );
+});
+
+app.post("/api/upload/skill", auth, uploader.single("skill"), (req, res) => {
   if (!req.file) return res.status(400).json({ message: "file was not found" });
 
   const file = req.file;
