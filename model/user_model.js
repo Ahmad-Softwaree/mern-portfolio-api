@@ -14,9 +14,9 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, "password is required"],
     },
-    date: {
-      type: Date,
-      default: Date.now,
+    image: {
+      type: String,
+      required: [true, "Please add an image"],
     },
   },
   { timestamps: true }

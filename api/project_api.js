@@ -15,7 +15,7 @@ projectApp.get("/", async (req, res) => {
     const projects = await Project.find();
     res.status(200).json(projects);
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -29,69 +29,49 @@ projectApp.get("/:id", async (req, res) => {
     res.status(200).json(project);
   } catch (error) {
     if (error.kind === "ObjectId") return res.status(400).json({ error: "object id is invalid" });
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: error.message });
   }
 });
 
 //router  POST  project
 //@access private
-projectApp.post(
-  "/",
-  [
-    auth,
-    [
-      body("enTitle", "title is required").not().isEmpty(),
-      body("arTitle", "title is required").not().isEmpty(),
-      body("krTitle", "title is required").not().isEmpty(),
-      body("image", "image is required").not().isEmpty(),
-    ],
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-    let { enTitle, arTitle, krTitle, url, image, urlName } = req.body;
-    try {
-      const project = new Project({
-        user: req.user_id,
-        enTitle,
-        arTitle,
-        krTitle,
-        url,
-        urlName,
-        image,
-      });
-      await project.save();
-
-      res.status(200).json(project);
-    } catch (error) {
-      res.status(500).json({ error: error });
-    }
+projectApp.post("/", auth, async (req, res) => {
+  let { enTitle, arTitle, krTitle, enType, arType, krType, url, image } = req.body;
+  if (!enTitle || !arTitle || !krTitle || !enType || !krType || !arType || !image || !url)
+    return res.status(400).json({ error: "please provide all the fields" });
+  try {
+    const project = new Project(req.body);
+    project.user = req.user.id;
+    await project.save();
+    return res.status(200).json(project);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
-);
+});
 
 //router  PUT project
 //@access private
 
-projectApp.put("/:id", auth, async (req, res) => {
+projectApp.put("/:project_id", auth, async (req, res) => {
   try {
-    const project = await Project.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+    const project = await Project.findByIdAndUpdate(req.params.project_id, { $set: req.body }, { new: true });
     if (!project) return res.status(400).json({ error: "project not exist" });
-    res.status(200).json(project);
+    return res.status(200).json(project);
   } catch (error) {
-    res.status(500).json({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 });
 
 //router  DELETE project
 //@access private
 
-projectApp.delete("/:id", auth, async (req, res) => {
+projectApp.delete("/:project_id", auth, async (req, res) => {
   try {
-    const project = await Project.findByIdAndDelete(req.params.id);
+    const project = await Project.findByIdAndDelete(req.params.project_id);
     if (!project) return res.status(400).json({ error: "blog not exist" });
-    res.status(200).json({ message: "project deleted" });
+    return res.status(200).json(req.params.project_id);
   } catch (error) {
-    res.status(500).json({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 });
 

@@ -18,14 +18,23 @@ const ProjectSchema = new mongoose.Schema(
       type: String,
       required: [true, "title is required"],
     },
+    enType: {
+      type: String,
+      required: [true, "type is required"],
+    },
+    arType: {
+      type: String,
+      required: [true, "type is required"],
+    },
+    krType: {
+      type: String,
+      required: [true, "type is required"],
+    },
     url: {
       type: String,
       default: "",
     },
-    urlName: {
-      type: String,
-      default: "",
-    },
+
     image: {
       type: String,
       required: [true, "image is required"],

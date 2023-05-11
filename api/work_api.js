@@ -13,75 +13,61 @@ workApp.get("/", async (req, res) => {
     const works = await Work.find();
     res.status(200).json(works);
   } catch (error) {
-    return res.status(500).json({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 });
 
 //router GET one work
 //@access public
 
-workApp.get("/:id", async (req, res) => {
+workApp.get("/:work_id", async (req, res) => {
   try {
-    const work = await Work.findById(req.params.id);
+    const work = await Work.findById(req.params.work_id);
     if (!work) return res.status(400).json({ error: "work not find" });
-    res.status(200).json(work);
+    return res.status(200).json(work);
   } catch (error) {
     if (error.kind === "ObjectId") return res.status(500).json({ error: "Object Id error" });
-    return res.status(500).json({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 });
 
 //router POST work
 //@access private
 
-workApp.post(
-  "/",
-  [
-    auth,
-    [
-      body("enTitle", "title is required").not().isEmpty(),
-      body("arTitle", "title is required").not().isEmpty(),
-      body("krTitle", "title is required").not().isEmpty(),
-      body("companyName", "title is required").not().isEmpty(),
-      body("image", "title is required").not().isEmpty(),
-      body("from", "title is required").not().isEmpty(),
-    ],
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-
-    try {
-      const newWork = new Work(req.body);
-      await newWork.save();
-      res.status(200).json(newWork);
-    } catch (error) {
-      return res.status(500).json({ error: error });
-    }
+workApp.post("/", auth, async (req, res) => {
+  let { enTitle, arTitle, krTitle, company, image, from, to } = req.body;
+  if (!enTitle || !arTitle || !krTitle || !company || !image || !from) return res.status(400).json({ error: "Please provide data" });
+  try {
+    const work = new Work(req.body);
+    work.user = req.user.id;
+    await work.save();
+    res.status(200).json(work);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
-);
+});
 
 //route PUT work
 //@access private
 
-workApp.put("/:id", auth, async (req, res) => {
+workApp.put("/:work_id", auth, async (req, res) => {
   try {
-    const work = await Work.findByIdAndUpdate(req.params.id, { $set: req.body });
+    const work = await Work.findByIdAndUpdate(req.params.work_id, { $set: req.body });
     if (!work) return res.status(400).json({ error: "work is not exist" });
-    res.status(200).json(work);
+    return res.status(200).json(work);
   } catch (error) {
-    return res.status(500).json({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 });
 
 //route DELETE work
 //@access private
 
-workApp.delete("/:id", auth, async (req, res) => {
+workApp.delete("/:work_id", auth, async (req, res) => {
   try {
-    const work = await Work.findByIdAndDelete(req.params.id);
+    const work = await Work.findByIdAndDelete(req.params.work_id);
     if (!work) return res.status(400).json({ error: "work is not exist" });
-    res.status(200).json({ msg: "work deleted" });
+    return res.status(200).json(req.params.work_id);
   } catch (error) {
     return res.status(500).json({ error: error });
   }

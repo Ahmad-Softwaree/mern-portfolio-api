@@ -18,7 +18,7 @@ const WorkSchema = new mongoose.Schema(
       type: String,
       required: [true, "job title is required"],
     },
-    companyName: {
+    company: {
       type: String,
       required: [true, "company name is required"],
     },

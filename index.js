@@ -49,7 +49,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: process.env.REACT_HOST,
+    origin: process.env.REACT_LOCAL_HOST,
     optionsSuccessStatus: 200,
   })
 );
@@ -69,9 +69,9 @@ app.use("/public/images/works", express.static(path.join(__dirname, "/public/ima
 
 app.use("/api/auth", authApp);
 app.use("/api/user", userApp);
-app.use("/api/blog", blogApp);
-app.use("/api/project", projectApp);
-app.use("/api/work", workApp);
+app.use("/api/blogs", blogApp);
+app.use("/api/projects", projectApp);
+app.use("/api/works", workApp);
 
 //connect db
 connectDB();
@@ -84,20 +84,37 @@ const uploader = multer({ storage: multer.memoryStorage() });
 
 const storage = getStorage();
 
-//multer blog storage
+app.post("/api/upload/admin", auth, uploader.single("admin"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send("No file was uploaded.");
+  }
 
-const blogStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/images/blogs");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
+  const file = req.file;
+
+  let uploadedFilename = file.originalname.split(".")[0] + "-" + Date.now() + path.extname(file.originalname);
+
+  const storageRef = ref(storage, `admin-images/${uploadedFilename}`);
+
+  const uploadTask = uploadBytesResumable(storageRef, file.buffer);
+
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log(progress + "% done");
+    },
+    (error) => {
+      res.status(400).json({ warning: "هەڵەیەک هەیە" });
+    },
+    () => {
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        res.status(200).json({ message: "uploaded", url: downloadURL });
+      });
+    }
+  );
 });
 
-const blogUploader = multer({ storage: blogStorage });
-
-app.post("/api/upload/blog", auth, uploader.single("blogImage"), (req, res) => {
+app.post("/api/upload/blog", auth, uploader.single("blog"), (req, res) => {
   if (!req.file) return res.status(400).json({ message: "file was not found" });
 
   const file = req.file;
@@ -123,20 +140,7 @@ app.post("/api/upload/blog", auth, uploader.single("blogImage"), (req, res) => {
   );
 });
 
-//multer project image
-
-const projectStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/images/projects");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-
-const projectUploader = multer({ storage: projectStorage });
-
-app.post("/api/upload/project", auth, uploader.single("projectImage"), (req, res) => {
+app.post("/api/upload/project", auth, uploader.single("project"), (req, res) => {
   if (!req.file) return res.status(400).json({ message: "file was not found" });
 
   const file = req.file;
@@ -162,20 +166,7 @@ app.post("/api/upload/project", auth, uploader.single("projectImage"), (req, res
   );
 });
 
-//multer work image
-
-const workStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/images/works");
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-
-const workUploader = multer({ storage: workStorage });
-
-app.post("/api/upload/work", auth, uploader.single("workImage"), (req, res) => {
+app.post("/api/upload/work", auth, uploader.single("work"), (req, res) => {
   if (!req.file) return res.status(400).json({ message: "file was not found" });
 
   const file = req.file;

@@ -9,95 +9,86 @@ const blogApp = express.Router();
 //router  GET blogs
 //@access public
 
-blogApp.get("/", async (req, res) => {
+blogApp.get("/home", async (req, res) => {
+  try {
+    const blogs = await Blog.find({})
+      .sort({ _id: -1 })
+      .limit(10)
+      .populate([
+        {
+          path: "user",
+          select: ["name", "image"],
+        },
+      ]);
+    return res.status(200).json(blogs);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+blogApp.get("/all", async (req, res) => {
   try {
     const blogs = await Blog.find();
-    res.status(200).json(blogs);
+    return res.status(200).json(blogs);
   } catch (error) {
-    res.status(500).json({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 });
 
 //router  GET one blog by id
 //@access public
 
-blogApp.get("/:id", async (req, res) => {
+blogApp.get("/one/:blog_id", async (req, res) => {
   try {
-    const blog = await Blog.findById(req.params.id);
+    const blog = await Blog.findById(req.params.blog_id);
     if (!blog) return res.status(400).json({ error: "blog not exist" });
-    res.status(200).json(blog);
+    return res.status(200).json(blog);
   } catch (error) {
     if (error.kind === "ObjectId") return res.status(400).json({ error: "object id is not valid" });
-    res.status(500).json({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 });
 
 //router  POST blog
 //@access private
 
-blogApp.post(
-  "/",
-  [
-    auth,
-    [
-      body("enTitle", "title is required").not().isEmpty(),
-      body("arTitle", "title is required").not().isEmpty(),
-      body("krTitle", "title is required").not().isEmpty(),
-
-      body("enBody", "body is required").not().isEmpty(),
-      body("arBody", "body is required").not().isEmpty(),
-      body("krBody", "body is required").not().isEmpty(),
-
-      body("image", "image is required").not().isEmpty(),
-    ],
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-    let { enTitle, arTitle, krTitle, enBody, arBody, krBody, image } = req.body;
-    try {
-      const blog = new Blog({
-        user: req.user_id,
-        enTitle,
-        arTitle,
-        krTitle,
-        enBody,
-        arBody,
-        krBody,
-        image,
-      });
-      await blog.save();
-
-      res.status(200).json(blog);
-    } catch (error) {
-      res.status(500).json({ error: error });
-    }
+blogApp.post("/:user_id", auth, async (req, res) => {
+  let { enTitle, arTitle, krTitle, enBody, arBody, krBody, image } = req.body;
+  if (!enTitle || !arTitle || !krTitle || !enBody || !krBody || !arBody || !image)
+    return res.status(400).json({ error: "please provide all the fields" });
+  try {
+    const blog = new Blog(req.body);
+    blog.user = req.user.id;
+    await blog.save();
+    return res.status(200).json(blog);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
   }
-);
+});
 
 //router  PUT blog
 //@access private
 
-blogApp.put("/:id", auth, async (req, res) => {
+blogApp.put("/:blog_id", auth, async (req, res) => {
   try {
-    const blog = await Blog.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+    const blog = await Blog.findByIdAndUpdate(req.params.blog_id, { $set: req.body }, { new: true });
     if (!blog) return res.status(400).json({ error: "blog not exist" });
-    res.status(200).json(blog);
+    return res.status(200).json(blog);
   } catch (error) {
-    res.status(500).json({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 });
 
 //router  DELETE blog
 //@access private
 
-blogApp.delete("/:id", auth, async (req, res) => {
+blogApp.delete("/:blog_id", auth, async (req, res) => {
   try {
-    const blog = await Blog.findByIdAndDelete(req.params.id);
+    const blog = await Blog.findByIdAndDelete(req.params.blog_id);
     if (!blog) return res.status(400).json({ error: "blog not exist" });
-    res.status(200).json({ message: "blog deleted" });
+    return res.status(200).json(req.params.blog_id);
   } catch (error) {
-    res.status(500).json({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 });
 

@@ -9,12 +9,12 @@ const auth = async (req, res, next) => {
 
   try {
     const decode = jwt.verify(token, process.env.JWT_SECRET);
-    req.user_id = decode.id;
-    const user = await User.findById(req.user_id);
+    const user = await User.findById(decode.id);
     if (!user) return res.status(401).json({ error: "UnAuthorized user" });
+    req.user = decode;
     next();
   } catch (error) {
-    return res.status(401).json({ error: "UnAuthorized user" });
+    return res.status(401).json({ error: error.message });
   }
 };
 
