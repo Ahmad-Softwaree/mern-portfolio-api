@@ -49,7 +49,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: process.env.REACT_HOST,
+    origin: process.env.REACT_LOCAL_HOST,
     optionsSuccessStatus: 200,
   })
 );
