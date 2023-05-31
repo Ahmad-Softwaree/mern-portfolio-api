@@ -11,7 +11,12 @@ const projectApp = express.Router();
 
 projectApp.get("/", async (req, res) => {
   try {
-    const projects = await Project.find();
+    const projects = await Project.find().populate([
+      {
+        path: "stacks.stack",
+        select: ["name", "color", "_id"],
+      },
+    ]);
     res.status(200).json(projects);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -35,13 +40,19 @@ projectApp.get("/:id", async (req, res) => {
 //router  POST  project
 //@access private
 projectApp.post("/", auth, async (req, res) => {
-  let { enTitle, arTitle, krTitle, enType, arType, krType, url, image } = req.body;
-  if (!enTitle || !arTitle || !krTitle || !enType || !krType || !arType || !image || !url)
+  let { enTitle, arTitle, krTitle, enType, arType, krType, url, image, stacks } = req.body;
+  if (!enTitle || !arTitle || !krTitle || !enType || !krType || !arType || !image || !url || stacks.length === 0)
     return res.status(400).json({ error: "please provide all the fields" });
   try {
     const project = new Project(req.body);
     project.user = req.user.id;
     await project.save();
+    await project.populate([
+      {
+        path: "stacks.stack",
+        select: ["name", "color", "_id"],
+      },
+    ]);
     return res.status(200).json(project);
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -55,6 +66,12 @@ projectApp.put("/:project_id", auth, async (req, res) => {
   try {
     const project = await Project.findByIdAndUpdate(req.params.project_id, { $set: req.body }, { new: true });
     if (!project) return res.status(400).json({ error: "project not exist" });
+    await project.populate([
+      {
+        path: "stacks.stack",
+        select: ["name", "color", "_id"],
+      },
+    ]);
     return res.status(200).json(project);
   } catch (error) {
     return res.status(500).json({ error: error.message });

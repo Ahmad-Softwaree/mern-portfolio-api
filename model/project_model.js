@@ -34,6 +34,14 @@ const ProjectSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    stacks: [
+      {
+        stack: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "stack",
+        },
+      },
+    ],
 
     image: {
       type: String,

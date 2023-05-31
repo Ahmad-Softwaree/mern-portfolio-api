@@ -39,7 +39,12 @@ blogApp.get("/all", async (req, res) => {
 
 blogApp.get("/one/:blog_id", async (req, res) => {
   try {
-    const blog = await Blog.findById(req.params.blog_id);
+    const blog = await Blog.findById(req.params.blog_id).populate([
+      {
+        path: "user",
+        select: ["name", "image"],
+      },
+    ]);
     if (!blog) return res.status(400).json({ error: "blog not exist" });
     return res.status(200).json(blog);
   } catch (error) {

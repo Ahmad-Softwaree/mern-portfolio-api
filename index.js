@@ -13,6 +13,8 @@ import workApp from "./api/work_api.js";
 import auth from "./middleware/auth.js";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import firebaseStorage from "./firebase.js";
+import stackApp from "./api/stack_api.js";
+import categoryApp from "./api/category_api.js";
 dotenv.config();
 const app = express();
 
@@ -48,6 +50,8 @@ app.use("/api/user", userApp);
 app.use("/api/blogs", blogApp);
 app.use("/api/projects", projectApp);
 app.use("/api/works", workApp);
+app.use("/api/stack", stackApp);
+app.use("/api/category", categoryApp);
 
 //connect db
 connectDB();
