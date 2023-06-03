@@ -120,6 +120,32 @@ app.post("/api/upload/blog", auth, uploader.single("blog"), (req, res) => {
   );
 });
 
+app.post("/api/upload/inner_blog", auth, uploader.single("innerBlog"), (req, res) => {
+  if (!req.file) return res.status(400).json({ message: "file was not found" });
+
+  const file = req.file;
+  let uploadedFilename = file.originalname.split(".")[0] + "-" + Date.now() + path.extname(file.originalname);
+
+  const storageRef = ref(storage, `blog-images/${uploadedFilename}`);
+
+  const uploadTask = uploadBytesResumable(storageRef, file.buffer);
+
+  uploadTask.on(
+    "state_changed",
+    (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    },
+    (error) => {
+      res.status(400).json({ warning: error });
+    },
+    () => {
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+        res.status(200).json({ message: "uploaded", url: downloadURL });
+      });
+    }
+  );
+});
+
 app.post("/api/upload/project", auth, uploader.single("project"), (req, res) => {
   if (!req.file) return res.status(400).json({ message: "file was not found" });
 
