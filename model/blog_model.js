@@ -34,7 +34,12 @@ const BlogSchema = new mongoose.Schema(
       type: String,
       required: [true, "image is required"],
     },
-    category: [String],
+    categories: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "category",
+      },
+    ],
     date: {
       type: Date,
       default: Date.now,

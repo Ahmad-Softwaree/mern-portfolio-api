@@ -23,21 +23,29 @@ categoryApp.get("/:category_id", auth, async (req, res) => {
 });
 
 categoryApp.post("/", auth, async (req, res) => {
+  let { enName, arName, krName } = req.body;
   try {
+    if (enName === "" || arName === "" || krName === "") {
+      return res.status(400).json({ error: "Please provide all fields" });
+    }
     const category = new Category(req.body);
     await category.save();
     return res.status(200).json(category);
   } catch (error) {
-    return res.status(500).json({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 });
 
 categoryApp.put("/:category_id", auth, async (req, res) => {
+  let { enName, arName, krName } = req.body;
   try {
+    if (enName === "" || arName === "" || krName === "") {
+      return res.status(400).json({ error: "Please provide all fields" });
+    }
     const category = await Category.findByIdAndUpdate(req.params.category_id, { $set: req.body }, { new: true });
     return res.status(200).json(category);
   } catch (error) {
-    return res.status(500).json({ error: error });
+    return res.status(500).json({ error: error.message });
   }
 });
 

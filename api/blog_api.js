@@ -18,6 +18,10 @@ blogApp.get("/home", async (req, res) => {
           path: "user",
           select: ["name", "image"],
         },
+        {
+          path: "categories",
+          select: ["_id", "enName", "arName", "krName"],
+        },
       ]);
     return res.status(200).json(blogs);
   } catch (err) {
@@ -27,7 +31,16 @@ blogApp.get("/home", async (req, res) => {
 
 blogApp.get("/all", async (req, res) => {
   try {
-    const blogs = await Blog.find();
+    const blogs = await Blog.find().populate([
+      {
+        path: "user",
+        select: ["name", "image"],
+      },
+      {
+        path: "categories",
+        select: ["_id", "enName", "arName", "krName"],
+      },
+    ]);
     return res.status(200).json(blogs);
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -44,11 +57,37 @@ blogApp.get("/one/:blog_id", async (req, res) => {
         path: "user",
         select: ["name", "image"],
       },
+      {
+        path: "categories",
+        select: ["_id", "enName", "arName", "krName"],
+      },
     ]);
     if (!blog) return res.status(400).json({ error: "blog not exist" });
     return res.status(200).json(blog);
   } catch (error) {
     if (error.kind === "ObjectId") return res.status(400).json({ error: "object id is not valid" });
+    return res.status(500).json({ error: error.message });
+  }
+});
+
+//router GET blog category related
+
+blogApp.get("/category/:category_id", async (req, res) => {
+  try {
+    const blog = await Blog.find().populate([
+      {
+        path: "user",
+        select: ["name", "image"],
+      },
+      {
+        path: "categories",
+        select: ["_id", "enName", "arName", "krName"],
+        match: { _id: req.params.category_id },
+      },
+    ]);
+    if (!blog) return res.status(400).json({ error: "blog not exist" });
+    return res.status(200).json(blog);
+  } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 });
