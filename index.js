@@ -36,12 +36,21 @@ app.use(
 
 app.use("./public", express.static("public"));
 //blog
-app.use("/public/images/blogs", express.static(path.join(__dirname, "/public/images/blogs")));
+app.use(
+  "/public/images/blogs",
+  express.static(path.join(__dirname, "/public/images/blogs"))
+);
 //project
-app.use("/public/images/projects", express.static(path.join(__dirname, "/public/images/projects")));
+app.use(
+  "/public/images/projects",
+  express.static(path.join(__dirname, "/public/images/projects"))
+);
 
 //works
-app.use("/public/images/works", express.static(path.join(__dirname, "/public/images/works")));
+app.use(
+  "/public/images/works",
+  express.static(path.join(__dirname, "/public/images/works"))
+);
 
 //use routes
 
@@ -71,7 +80,11 @@ app.post("/api/upload/admin", auth, uploader.single("admin"), (req, res) => {
 
   const file = req.file;
 
-  let uploadedFilename = file.originalname.split(".")[0] + "-" + Date.now() + path.extname(file.originalname);
+  let uploadedFilename =
+    file.originalname.split(".")[0] +
+    "-" +
+    Date.now() +
+    path.extname(file.originalname);
 
   const storageRef = ref(storage, `admin-images/${uploadedFilename}`);
 
@@ -98,7 +111,11 @@ app.post("/api/upload/blog", auth, uploader.single("blog"), (req, res) => {
   if (!req.file) return res.status(400).json({ message: "file was not found" });
 
   const file = req.file;
-  let uploadedFilename = file.originalname.split(".")[0] + "-" + Date.now() + path.extname(file.originalname);
+  let uploadedFilename =
+    file.originalname.split(".")[0] +
+    "-" +
+    Date.now() +
+    path.extname(file.originalname);
 
   const storageRef = ref(storage, `blog-images/${uploadedFilename}`);
 
@@ -120,63 +137,89 @@ app.post("/api/upload/blog", auth, uploader.single("blog"), (req, res) => {
   );
 });
 
-app.post("/api/upload/inner_blog", auth, uploader.single("innerBlog"), (req, res) => {
-  if (!req.file) return res.status(400).json({ message: "file was not found" });
+app.post(
+  "/api/upload/inner_blog",
+  auth,
+  uploader.single("innerBlog"),
+  (req, res) => {
+    if (!req.file)
+      return res.status(400).json({ message: "file was not found" });
 
-  const file = req.file;
-  let uploadedFilename = file.originalname.split(".")[0] + "-" + Date.now() + path.extname(file.originalname);
+    const file = req.file;
+    let uploadedFilename =
+      file.originalname.split(".")[0] +
+      "-" +
+      Date.now() +
+      path.extname(file.originalname);
 
-  const storageRef = ref(storage, `blog-images/${uploadedFilename}`);
+    const storageRef = ref(storage, `blog-images/${uploadedFilename}`);
 
-  const uploadTask = uploadBytesResumable(storageRef, file.buffer);
+    const uploadTask = uploadBytesResumable(storageRef, file.buffer);
 
-  uploadTask.on(
-    "state_changed",
-    (snapshot) => {
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    },
-    (error) => {
-      res.status(400).json({ warning: error });
-    },
-    () => {
-      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        res.status(200).json({ message: "uploaded", url: downloadURL });
-      });
-    }
-  );
-});
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      },
+      (error) => {
+        res.status(400).json({ warning: error });
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          res.status(200).json({ message: "uploaded", url: downloadURL });
+        });
+      }
+    );
+  }
+);
 
-app.post("/api/upload/project", auth, uploader.single("project"), (req, res) => {
-  if (!req.file) return res.status(400).json({ message: "file was not found" });
+app.post(
+  "/api/upload/project",
+  auth,
+  uploader.single("project"),
+  (req, res) => {
+    if (!req.file)
+      return res.status(400).json({ message: "file was not found" });
 
-  const file = req.file;
-  let uploadedFilename = file.originalname.split(".")[0] + "-" + Date.now() + path.extname(file.originalname);
+    const file = req.file;
+    let uploadedFilename =
+      file.originalname.split(".")[0] +
+      "-" +
+      Date.now() +
+      path.extname(file.originalname);
 
-  const storageRef = ref(storage, `project-images/${uploadedFilename}`);
+    const storageRef = ref(storage, `project-images/${uploadedFilename}`);
 
-  const uploadTask = uploadBytesResumable(storageRef, file.buffer);
+    const uploadTask = uploadBytesResumable(storageRef, file.buffer);
 
-  uploadTask.on(
-    "state_changed",
-    (snapshot) => {
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    },
-    (error) => {
-      res.status(400).json({ warning: "هەڵەیەک هەیە" });
-    },
-    () => {
-      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        res.status(200).json({ message: "uploaded", url: downloadURL });
-      });
-    }
-  );
-});
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      },
+      (error) => {
+        res.status(400).json({ warning: "هەڵەیەک هەیە" });
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          res.status(200).json({ message: "uploaded", url: downloadURL });
+        });
+      }
+    );
+  }
+);
 
 app.post("/api/upload/work", auth, uploader.single("work"), (req, res) => {
   if (!req.file) return res.status(400).json({ message: "file was not found" });
 
   const file = req.file;
-  let uploadedFilename = file.originalname.split(".")[0] + "-" + Date.now() + path.extname(file.originalname);
+  let uploadedFilename =
+    file.originalname.split(".")[0] +
+    "-" +
+    Date.now() +
+    path.extname(file.originalname);
 
   const storageRef = ref(storage, `work-images/${uploadedFilename}`);
 
@@ -202,7 +245,11 @@ app.post("/api/upload/skill", auth, uploader.single("skill"), (req, res) => {
   if (!req.file) return res.status(400).json({ message: "file was not found" });
 
   const file = req.file;
-  let uploadedFilename = file.originalname.split(".")[0] + "-" + Date.now() + path.extname(file.originalname);
+  let uploadedFilename =
+    file.originalname.split(".")[0] +
+    "-" +
+    Date.now() +
+    path.extname(file.originalname);
 
   const storageRef = ref(storage, `work-images/${uploadedFilename}`);
 
