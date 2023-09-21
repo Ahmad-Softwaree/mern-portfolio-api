@@ -10,7 +10,6 @@ const workApp = express.Router();
 workApp.get("/", async (req, res) => {
   try {
     const works = await Work.find();
-    console.log(works);
     res.status(200).json(works);
   } catch (error) {
     return res.status(500).json({ error: error.message });
