@@ -10,6 +10,7 @@ const workApp = express.Router();
 workApp.get("/", async (req, res) => {
   try {
     const works = await Work.find();
+    console.log(works);
     res.status(200).json(works);
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -25,7 +26,8 @@ workApp.get("/:work_id", async (req, res) => {
     if (!work) return res.status(400).json({ error: "work not find" });
     return res.status(200).json(work);
   } catch (error) {
-    if (error.kind === "ObjectId") return res.status(500).json({ error: "Object Id error" });
+    if (error.kind === "ObjectId")
+      return res.status(500).json({ error: "Object Id error" });
     return res.status(500).json({ error: error.message });
   }
 });
@@ -35,7 +37,8 @@ workApp.get("/:work_id", async (req, res) => {
 
 workApp.post("/", auth, async (req, res) => {
   let { enTitle, arTitle, krTitle, company, image, from, to } = req.body;
-  if (!enTitle || !arTitle || !krTitle || !company || !image || !from) return res.status(400).json({ error: "Please provide data" });
+  if (!enTitle || !arTitle || !krTitle || !company || !image || !from)
+    return res.status(400).json({ error: "Please provide data" });
   try {
     const work = new Work(req.body);
     work.user = req.user.id;
@@ -51,7 +54,9 @@ workApp.post("/", auth, async (req, res) => {
 
 workApp.put("/:work_id", auth, async (req, res) => {
   try {
-    const work = await Work.findByIdAndUpdate(req.params.work_id, { $set: req.body });
+    const work = await Work.findByIdAndUpdate(req.params.work_id, {
+      $set: req.body,
+    });
     if (!work) return res.status(400).json({ error: "work is not exist" });
     return res.status(200).json(work);
   } catch (error) {
