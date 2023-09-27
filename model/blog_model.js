@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const BlogSchema = new mongoose.Schema(
   {
-    user: {
+    admin: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      ref: "admin",
     },
     enTitle: {
       type: String,
@@ -30,19 +30,25 @@ const BlogSchema = new mongoose.Schema(
       type: String,
       required: [true, "body is required"],
     },
-    image: {
+    imageName: {
       type: String,
-      required: [true, "image is required"],
+      required: [true, "imageName is required"],
+    },
+    imageURL: {
+      type: String,
+      required: [true, "imageURL is required"],
     },
     categories: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "category",
+        category: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "category",
+        },
       },
     ],
     date: {
       type: Date,
-      default: Date.now,
+      default: Date.now(),
     },
   },
   { timestamps: true }

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const UserSchema = new mongoose.Schema(
+const AdminSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -14,7 +14,11 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, "password is required"],
     },
-    image: {
+    imageName: {
+      type: String,
+      required: [true, "Please add an image"],
+    },
+    imageURL: {
       type: String,
       required: [true, "Please add an image"],
     },
@@ -22,6 +26,6 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const User = new mongoose.model("user", UserSchema);
+const Admin = new mongoose.model("admin", AdminSchema);
 
-export default User;
+export default Admin;

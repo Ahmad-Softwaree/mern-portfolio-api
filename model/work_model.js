@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const WorkSchema = new mongoose.Schema(
   {
-    user: {
+    admin: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      ref: "admin",
     },
     enTitle: {
       type: String,
@@ -18,13 +18,21 @@ const WorkSchema = new mongoose.Schema(
       type: String,
       required: [true, "job title is required"],
     },
+    link: {
+      type: String,
+      required: [true, "link name is required"],
+    },
     company: {
       type: String,
       required: [true, "company name is required"],
     },
-    image: {
+    imageName: {
       type: String,
-      required: [true, "company image is required"],
+      required: [true, "imageName is required"],
+    },
+    imageURL: {
+      type: String,
+      required: [true, "imageURL is required"],
     },
     from: {
       type: Date,
@@ -32,6 +40,10 @@ const WorkSchema = new mongoose.Schema(
     },
     to: {
       type: Date,
+    },
+    continue: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

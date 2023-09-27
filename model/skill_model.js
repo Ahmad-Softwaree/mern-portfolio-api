@@ -2,38 +2,26 @@ import mongoose from "mongoose";
 
 const SkillSchema = new mongoose.Schema(
   {
-    user: {
+    admin: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      ref: "admin",
     },
-    categories: [
-      {
-        header: {
-          type: String,
-          required: [true, "image is required"],
-        },
-        skills: [
-          {
-            image: {
-              type: String,
-              required: [true, "image is required"],
-            },
-            enTitle: {
-              type: String,
-              required: [true, "title is required"],
-            },
-            arTitle: {
-              type: String,
-              required: [true, "title is required"],
-            },
-            krTitle: {
-              type: String,
-              required: [true, "title is required"],
-            },
-          },
-        ],
-      },
-    ],
+    name: {
+      type: String,
+      required: [true, "Name is required"],
+    },
+    type: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "type",
+    },
+    imageName: {
+      type: String,
+      required: [true, "imageName is required"],
+    },
+    imageURL: {
+      type: String,
+      required: [true, "imageURL is required"],
+    },
   },
   { timestamps: true }
 );

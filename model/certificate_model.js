@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ProjectSchema = new mongoose.Schema(
+const CertificateSchema = new mongoose.Schema(
   {
     admin: {
       type: mongoose.Schema.Types.ObjectId,
@@ -52,18 +52,6 @@ const ProjectSchema = new mongoose.Schema(
         },
       },
     ],
-    gits: [
-      {
-        git: {
-          type: String,
-          default: "",
-        },
-        name: {
-          type: String,
-          default: "",
-        },
-      },
-    ],
 
     imageName: {
       type: String,
@@ -81,6 +69,6 @@ const ProjectSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Project = new mongoose.model("project", ProjectSchema);
+const Certificate = new mongoose.model("certificate", CertificateSchema);
 
-export default Project;
+export default Certificate;
