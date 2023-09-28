@@ -4,8 +4,17 @@ import {
   generateHashPassword,
 } from "../functions/config.js";
 import Admin from "../model/admin_model.js";
+import Blog from "../model/blog_model.js";
+import Certificate from "../model/certificate_model.js";
+import Project from "../model/project_model.js";
+import Skill from "../model/skill_model.js";
+import Work from "../model/work_model.js";
 import { deleteById } from "../query/delete_data.js";
-import { findOneByField, findOneById } from "../query/find_data.js";
+import {
+  alreadyExistByField,
+  findOneByField,
+  findOneById,
+} from "../query/find_data.js";
 import { insertData } from "../query/insert_data.js";
 import { updateOneById } from "../query/update_data.js";
 
@@ -88,6 +97,12 @@ export const updateAdmin = async (req, res) => {
 
 export const deleteAdmin = async (req, res) => {
   try {
+    await alreadyExistByField("blog", Blog, "admin", req.admin);
+    await alreadyExistByField("project", Project, "admin", req.admin);
+    await alreadyExistByField("skill", Skill, "admin", req.admin);
+    await alreadyExistByField("work", Work, "admin", req.admin);
+    await alreadyExistByField("certificate", Certificate, "admin", req.admin);
+
     await deleteById("admin", Admin, req.admin);
     return res.status(200).json(req.params.admin_id);
   } catch (error) {
