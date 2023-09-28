@@ -12,12 +12,12 @@ const admin_middleware = async (req, res, next) => {
     if (token === null)
       return res.status(401).json({ error: "تۆکن بوونی نیە" });
     const decoded = jwt.decode(token, JWT_SECRET);
-    if (!decoded) return res.status(400).json({ error: "ئەدمین بوونی نیە" });
+    if (!decoded) return res.status(400).json({ error: "There is no admin" });
 
     const adminId = decoded.id;
     let admin = await findOneById("admin", Admin, adminId);
     if (admin === null) {
-      res.status(400).json({ error: "ئەدمین بوونی نیە" });
+      res.status(400).json({ error: "There is no admin" });
       next();
     } else {
       req.admin = adminId;
