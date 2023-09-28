@@ -22,7 +22,6 @@ export const getAllStacks = async (req, res) => {
 
 export const getOneStack = async (req, res) => {
   try {
-    console.log(req.params);
     const stack = await findOneById("stack", Stack, req.params.stack_id, false);
     return res.status(200).json(stack);
   } catch (error) {

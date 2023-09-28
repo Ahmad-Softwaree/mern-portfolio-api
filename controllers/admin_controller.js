@@ -78,7 +78,9 @@ export const updateAdmin = async (req, res) => {
       req.body,
       false
     );
-    return res.status(200).json(admin);
+    return res
+      .status(200)
+      .json({ data: admin, message: "Admin Updated Successfully" });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

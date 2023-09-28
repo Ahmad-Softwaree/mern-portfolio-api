@@ -10,10 +10,14 @@ const SkillSchema = new mongoose.Schema(
       type: String,
       required: [true, "Name is required"],
     },
-    type: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "type",
-    },
+    types: [
+      {
+        type: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "type",
+        },
+      },
+    ],
     imageName: {
       type: String,
       required: [true, "imageName is required"],

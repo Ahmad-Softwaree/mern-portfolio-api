@@ -155,7 +155,8 @@ export const projectSearch = async (req, res) => {
 
 export const addProject = async (req, res) => {
   try {
-    const errors = checkBody(req.body);
+    let { url, ...other } = req.body;
+    const errors = checkBody({ ...other });
     if (errors.length > 0) return res.status(400).json(errors);
     const project = await insertData(
       "project",
@@ -174,7 +175,8 @@ export const addProject = async (req, res) => {
 
 export const updateProject = async (req, res) => {
   try {
-    const errors = checkBody(req.body);
+    let { url, ...other } = req.body;
+    const errors = checkBody({ ...other });
     if (errors.length > 0) return res.status(400).json(errors);
     const project = await updateOneById(
       "project",
@@ -195,12 +197,10 @@ export const updateProject = async (req, res) => {
 export const deleteProject = async (req, res) => {
   try {
     await deleteById("project", Project, req.params.project_id);
-    return res
-      .status(200)
-      .json({
-        data: req.params.project_id,
-        message: "project deleted successfully",
-      });
+    return res.status(200).json({
+      data: req.params.project_id,
+      message: "project deleted successfully",
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

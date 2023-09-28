@@ -91,10 +91,11 @@ export const skillPopulation = (
   if (initial)
     return [
       { path: "admin", select: ADMIN_INITIAL_POPULATE_SELECTION },
-      { path: "type", select: TYPE_INITIAL_POPULATE_SELECTION },
+      { path: "types.type", select: TYPE_INITIAL_POPULATE_SELECTION },
     ];
   let population = [];
   if (admin) population.push({ path: "admin", select: adminPopulationSelect });
-  if (type) population.push({ path: "type", select: typePopulationSelect });
+  if (type)
+    population.push({ path: "types.type", select: typePopulationSelect });
   return population;
 };
