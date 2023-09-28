@@ -12,7 +12,7 @@ const typeRouter = express.Router();
 
 typeRouter.get("/", getAllCategories);
 
-typeRouter.get("/:type_id", admin_middleware, getOneType);
+typeRouter.get("/:type_id", getOneType);
 
 typeRouter.post("/", admin_middleware, addType);
 
