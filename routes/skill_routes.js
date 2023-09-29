@@ -13,7 +13,7 @@ const skillRouter = express.Router();
 
 skillRouter.get("/", getAllSkills);
 
-skillRouter.get("/:skill_id", admin_middleware, getOneSkill);
+skillRouter.get("/one/:skill_id", admin_middleware, getOneSkill);
 
 skillRouter.post("/", admin_middleware, addSkill);
 
