@@ -2,6 +2,7 @@ import { checkBody } from "../functions/check.js";
 import Project from "../model/project_model.js";
 import { deleteById } from "../query/delete_data.js";
 import {
+  alreadyExistByThreeField,
   findAll,
   findManyByThreeField,
   findOneById,
@@ -158,6 +159,20 @@ export const addProject = async (req, res) => {
     let { url, ...other } = req.body;
     const errors = checkBody({ ...other });
     if (errors.length > 0) return res.status(400).json(errors);
+    await alreadyExistByThreeField(
+      "project",
+      Project,
+      "enTitle",
+      req.body.enTitle,
+      false,
+      "arTitle",
+      req.body.arTitle,
+      false,
+      "krTitle",
+      req.body.krTitle,
+      false,
+      "or"
+    );
     const project = await insertData(
       "project",
       Project,
@@ -182,7 +197,7 @@ export const updateProject = async (req, res) => {
       "project",
       Project,
       req.params.project_id,
-      req.body,
+      { ...req.body, admin: req.admin },
       true,
       projectPopulation(true)
     );

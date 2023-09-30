@@ -9,14 +9,17 @@ const BlogSchema = new mongoose.Schema(
     enTitle: {
       type: String,
       required: [true, "title is required"],
+      unique: [true, "Must be unique"],
     },
     arTitle: {
       type: String,
       required: [true, "title is required"],
+      unique: [true, "Must be unique"],
     },
     krTitle: {
       type: String,
       required: [true, "title is required"],
+      unique: [true, "Must be unique"],
     },
     enBody: {
       type: String,

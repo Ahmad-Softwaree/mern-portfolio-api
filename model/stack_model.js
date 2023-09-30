@@ -5,6 +5,7 @@ const StackSchema = new mongoose.Schema(
     name: {
       type: String,
       required: ["true", "name is required"],
+      unique: [true, "Must be unique"],
     },
     color: {
       type: String,

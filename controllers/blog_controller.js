@@ -2,6 +2,7 @@ import { checkBody } from "../functions/check.js";
 import Blog from "../model/blog_model.js";
 import { deleteById } from "../query/delete_data.js";
 import {
+  alreadyExistByThreeField,
   findAll,
   findManyByThreeField,
   findOneById,
@@ -124,6 +125,20 @@ export const addBlog = async (req, res) => {
   try {
     const errors = checkBody(req.body);
     if (errors.length > 0) return res.status(400).json(errors);
+    await alreadyExistByThreeField(
+      "blog",
+      Blog,
+      "enTitle",
+      req.body.enTitle,
+      false,
+      "arTitle",
+      req.body.arTitle,
+      false,
+      "krTitle",
+      req.body.krTitle,
+      false,
+      "or"
+    );
     const blog = await insertData(
       "blog",
       Blog,
@@ -146,7 +161,7 @@ export const updateBlog = async (req, res) => {
       "blog",
       Blog,
       req.params.blog_id,
-      req.body,
+      { ...req.body, admin: req.admin },
       false
     );
     return res.status(200).json(blog);

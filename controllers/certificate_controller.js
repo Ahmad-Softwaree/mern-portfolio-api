@@ -2,6 +2,7 @@ import { checkBody } from "../functions/check.js";
 import Certificate from "../model/certificate_model.js";
 import { deleteById } from "../query/delete_data.js";
 import {
+  alreadyExistByThreeField,
   findAll,
   findManyByThreeField,
   findOneById,
@@ -157,6 +158,20 @@ export const addCertificate = async (req, res) => {
   try {
     const errors = checkBody(req.body);
     if (errors.length > 0) return res.status(400).json(errors);
+    await alreadyExistByThreeField(
+      "certificate",
+      Certificate,
+      "enTitle",
+      req.body.enTitle,
+      false,
+      "arTitle",
+      req.body.arTitle,
+      false,
+      "krTitle",
+      req.body.krTitle,
+      false,
+      "or"
+    );
     const certificate = await insertData(
       "certificate",
       Certificate,
@@ -180,7 +195,7 @@ export const updateCertificate = async (req, res) => {
       "certificate",
       Certificate,
       req.params.certificate_id,
-      req.body,
+      { ...req.body, admin: req.admin },
       true,
       certificatePopulation(true)
     );
@@ -195,12 +210,10 @@ export const updateCertificate = async (req, res) => {
 export const deleteCertificate = async (req, res) => {
   try {
     await deleteById("certificate", Certificate, req.params.certificate_id);
-    return res
-      .status(200)
-      .json({
-        data: req.params.certificate_id,
-        message: "certificate deleted successfully",
-      });
+    return res.status(200).json({
+      data: req.params.certificate_id,
+      message: "certificate deleted successfully",
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

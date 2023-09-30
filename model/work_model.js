@@ -9,14 +9,17 @@ const WorkSchema = new mongoose.Schema(
     enTitle: {
       type: String,
       required: [true, "job title is required"],
+      unique: [true, "Must be unique"],
     },
     arTitle: {
       type: String,
       required: [true, "job title is required"],
+      unique: [true, "Must be unique"],
     },
     krTitle: {
       type: String,
       required: [true, "job title is required"],
+      unique: [true, "Must be unique"],
     },
     link: {
       type: String,

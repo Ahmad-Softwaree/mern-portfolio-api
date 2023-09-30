@@ -1,7 +1,12 @@
 import { checkBody } from "../functions/check.js";
 import Work from "../model/work_model.js";
 import { deleteById } from "../query/delete_data.js";
-import { findAll, findOneById } from "../query/find_data.js";
+import {
+  alreadyExistByField,
+  alreadyExistByThreeField,
+  findAll,
+  findOneById,
+} from "../query/find_data.js";
 import { insertData } from "../query/insert_data.js";
 import { updateOneById } from "../query/update_data.js";
 
@@ -27,7 +32,13 @@ export const addWork = async (req, res) => {
   try {
     const errors = checkBody(req.body);
     if (errors.length > 0) return res.status(400).json(errors);
-    const work = await insertData("work", Work, req.body, false);
+    await alreadyExistByField("work", Work, "company", req.body.company);
+    const work = await insertData(
+      "work",
+      Work,
+      { ...req.body, admin: req.admin },
+      false
+    );
     return res
       .status(200)
       .json({ data: work, message: "Work Added Successfully" });
@@ -44,7 +55,7 @@ export const updateWork = async (req, res) => {
       "work",
       Work,
       req.params.work_id,
-      req.body,
+      { ...req.body, admin: req.admin },
       false
     );
     return res

@@ -11,6 +11,7 @@ import categoryRouter from "./routes/category_routes.js";
 import skillRouter from "./routes/skill_routes.js";
 import typeRouter from "./routes/type_routes.js";
 import certificateRouter from "./routes/certificate_routes.js";
+import subscribeRouter from "./routes/subscribe_routes.js";
 dotenv.config();
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/api/stack", stackRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/type", typeRouter);
 app.use("/api/skill", skillRouter);
+app.use("/api/subscribes", subscribeRouter);
 
 //connect db
 connectDB();
