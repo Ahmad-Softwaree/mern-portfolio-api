@@ -104,7 +104,10 @@ export const deleteAdmin = async (req, res) => {
     await alreadyExistByField("certificate", Certificate, "admin", req.admin);
 
     await deleteById("admin", Admin, req.admin);
-    return res.status(200).json(req.params.admin_id);
+    return res.status(200).json({
+      data: req.admin,
+      message: "Admin deleted successfully",
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

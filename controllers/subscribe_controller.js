@@ -31,7 +31,10 @@ export const addSubscribe = async (req, res) => {
 export const deleteSubscribe = async (req, res) => {
   try {
     await deleteById("subscribe", Subscribe, req.params.subscribe_id);
-    return res.status(200).json(req.params.subscribe_id);
+    return res.status(200).json({
+      data: req.params.subscribe_id,
+      message: "Subscribe deleted successfully",
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

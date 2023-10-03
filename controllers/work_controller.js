@@ -69,7 +69,10 @@ export const updateWork = async (req, res) => {
 export const deleteWork = async (req, res) => {
   try {
     await deleteById("work", Work, req.params.work_id);
-    return res.status(200).json(req.params.work_id);
+    return res.status(200).json({
+      data: req.params.work_id,
+      message: "Skill deleted successfully",
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

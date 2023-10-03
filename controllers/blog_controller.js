@@ -173,7 +173,10 @@ export const updateBlog = async (req, res) => {
 export const deleteBlog = async (req, res) => {
   try {
     await deleteById("blog", Blog, req.params.blog_id);
-    return res.status(200).json(req.params.blog_id);
+    return res.status(200).json({
+      data: req.params.blog_id,
+      message: "Blog deleted successfully",
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

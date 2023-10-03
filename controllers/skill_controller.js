@@ -77,7 +77,12 @@ export const updateSkill = async (req, res) => {
 export const deleteSkill = async (req, res) => {
   try {
     await deleteById("skill", Skill, req.params.skill_id);
-    return res.status(200).json(req.params.skill_id);
+    return res
+      .status(200)
+      .json({
+        data: req.params.skill_id,
+        message: "Skill deleted successfully",
+      });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
