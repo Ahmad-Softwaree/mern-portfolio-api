@@ -1,18 +1,29 @@
-import { checkBody } from "../functions/check.js";
+import { checkBody, countLength } from "../functions/check.js";
 import Skill from "../model/skill_model.js";
 import { deleteById } from "../query/delete_data.js";
 import {
   alreadyExistByField,
+  checkIfDataExist,
+  checkIfOneDataExist,
   findAll,
+  findOneByField,
   findOneById,
 } from "../query/find_data.js";
 import { insertData } from "../query/insert_data.js";
 import { skillPopulation } from "../query/populations.js";
-import { updateOneById } from "../query/update_data.js";
+import { updateOneByField, updateOneById } from "../query/update_data.js";
 
 export const getAllSkills = async (req, res) => {
   try {
-    const skills = await findAll("skill", Skill, true, skillPopulation(true));
+    const skills = await findAll(
+      "skill",
+      Skill,
+      true,
+      skillPopulation(true),
+      "",
+      0,
+      { sequence: 1 }
+    );
     return res.status(200).json(skills);
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -39,10 +50,11 @@ export const addSkill = async (req, res) => {
     const errors = checkBody(req.body);
     if (errors.length > 0) return res.status(400).json(errors);
     await alreadyExistByField("skill", Skill, "name", req.body.name);
+    let length = await countLength(Skill);
     const skill = await insertData(
       "skill",
       Skill,
-      { ...req.body, admin: req.admin },
+      { ...req.body, admin: req.admin, sequence: length + 1 },
       true,
       skillPopulation(true)
     );
@@ -58,6 +70,34 @@ export const updateSkill = async (req, res) => {
   try {
     const errors = checkBody(req.body);
     if (errors.length > 0) return res.status(400).json(errors);
+    let pre = await findOneById("skill", Skill, req.params.skill_id);
+    let check = await checkIfOneDataExist(
+      "skill",
+      Skill,
+      "sequence",
+      req.body.sequence
+    );
+    if (check) {
+      var pro = await findOneByField(
+        "skill",
+        Skill,
+        "sequence",
+        req.body.sequence,
+        false
+      );
+    }
+
+    if (pre !== pro && check) {
+      await updateOneByField(
+        "skill",
+        Skill,
+        "sequence",
+        req.body.sequence,
+        false,
+        { sequence: pre.sequence },
+        false
+      );
+    }
     const skill = await updateOneById(
       "skill",
       Skill,
@@ -77,12 +117,10 @@ export const updateSkill = async (req, res) => {
 export const deleteSkill = async (req, res) => {
   try {
     await deleteById("skill", Skill, req.params.skill_id);
-    return res
-      .status(200)
-      .json({
-        data: req.params.skill_id,
-        message: "Skill deleted successfully",
-      });
+    return res.status(200).json({
+      data: req.params.skill_id,
+      message: "Skill deleted successfully",
+    });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }

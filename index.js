@@ -12,6 +12,9 @@ import skillRouter from "./routes/skill_routes.js";
 import typeRouter from "./routes/type_routes.js";
 import certificateRouter from "./routes/certificate_routes.js";
 import subscribeRouter from "./routes/subscribe_routes.js";
+import { findAll } from "./query/find_data.js";
+import Skill from "./model/skill_model.js";
+import { updateManyByField } from "./query/update_data.js";
 dotenv.config();
 const app = express();
 

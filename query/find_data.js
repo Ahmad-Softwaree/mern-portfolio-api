@@ -101,6 +101,22 @@ export const checkIfDataExist = async (schemaName, schema) => {
     throw error;
   }
 };
+export const checkIfOneDataExist = async (
+  schemaName,
+  schema,
+  field,
+  value,
+  not
+) => {
+  try {
+    const data = await schema.findOne({
+      [field]: not ? { $ne: value } : value,
+    });
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const findManyByField = async (
   schemaName,

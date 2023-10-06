@@ -6,6 +6,10 @@ const SkillSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "admin",
     },
+    sequence: {
+      type: Number,
+      default: 0,
+    },
     name: {
       type: String,
       required: [true, "Name is required"],
