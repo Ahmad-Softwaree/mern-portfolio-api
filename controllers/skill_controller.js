@@ -75,8 +75,10 @@ export const updateSkill = async (req, res) => {
       "skill",
       Skill,
       "sequence",
-      req.body.sequence
+      req.body.sequence,
+      false
     );
+    if (!check) return res.status(400).json({ error: "skill not found" });
     if (check) {
       var pro = await findOneByField(
         "skill",
@@ -86,17 +88,22 @@ export const updateSkill = async (req, res) => {
         false
       );
     }
-
+    let data = [];
     if (pre !== pro && check) {
-      await updateOneByField(
-        "skill",
-        Skill,
-        "sequence",
-        req.body.sequence,
-        false,
-        { sequence: pre.sequence },
-        false
-      );
+      let skills = await findAll("skill", Skill, true, skillPopulation(true));
+      for (const val of skills) {
+        if (val.sequence >= pro.sequence && val.sequence < pre.sequence) {
+          val.sequence++;
+          data.push(val);
+        } else if (
+          val.sequence > pre.sequence &&
+          val.sequence <= pro.sequence
+        ) {
+          data.push(val);
+          val.sequence--;
+        }
+        await val.save();
+      }
     }
     const skill = await updateOneById(
       "skill",
@@ -106,9 +113,10 @@ export const updateSkill = async (req, res) => {
       true,
       skillPopulation(true)
     );
+    data.push(skill);
     return res
       .status(200)
-      .json({ data: skill, message: "Skill Updated Successfully" });
+      .json({ data, message: "Skill Updated Successfully" });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
