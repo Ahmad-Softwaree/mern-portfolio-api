@@ -1,20 +1,24 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import connectDB from "./database.js";
-import adminRouter from "./routes/admin_routes.js";
-import blogRouter from "./routes/blog_routes.js";
-import projectRouter from "./routes/project_routes.js";
-import workRouter from "./routes/work_routes.js";
-import stackRouter from "./routes/stack_routes.js";
-import categoryRouter from "./routes/category_routes.js";
-import skillRouter from "./routes/skill_routes.js";
-import typeRouter from "./routes/type_routes.js";
-import certificateRouter from "./routes/certificate_routes.js";
-import subscribeRouter from "./routes/subscribe_routes.js";
-import { findAll } from "./query/find_data.js";
-import Skill from "./model/skill_model.js";
-import { updateManyByField } from "./query/update_data.js";
+import authRouter from "./routes/auth.js";
+import connectDb from "./lib/database/mongoose.js";
+import blogRouter from "./routes/blog.js";
+import configRouter from "./routes/config.js";
+
+import certificateRouter from "./routes/certificate.js";
+import userRouter from "./routes/user.js";
+import projectRouter from "./routes/project.js";
+import subscribeRouter from "./routes/subscribe.js";
+import workRouter from "./routes/work.js";
+import skillRouter from "./routes/skill.js";
+
+import skillData from "./portfolio.skills.json" assert { type: "json" };
+
+import mongoose from "mongoose";
+import Project from "./model/project.js";
+import Skill from "./model/skill.js";
+
 dotenv.config();
 const app = express();
 
@@ -23,27 +27,47 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: [process.env.REACT_HOST],
+    origin: [process.env.CLIENT_URL],
     optionsSuccessStatus: 200,
   })
 );
 
 //use routes
 
-app.use("/api/admin", adminRouter);
-app.use("/api/blogs", blogRouter);
-app.use("/api/projects", projectRouter);
-app.use("/api/certificates", certificateRouter);
-app.use("/api/works", workRouter);
-app.use("/api/stack", stackRouter);
-app.use("/api/category", categoryRouter);
-app.use("/api/type", typeRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/blog", blogRouter);
+app.use("/api/project", projectRouter);
+
+app.use("/api/config", configRouter);
+app.use("/api/user", userRouter);
+app.use("/api/subscribe", subscribeRouter);
+app.use("/api/work", workRouter);
 app.use("/api/skill", skillRouter);
-app.use("/api/subscribes", subscribeRouter);
+
+app.use("/api/certificate", certificateRouter);
 
 //connect db
-connectDB();
+connectDb();
 
 app.listen(process.env.PORT || 3001, () => {
   console.log("Ahmad Software server is running");
+});
+
+app.get("/api/test", async (req, res) => {
+  try {
+    for (let val of skillData) {
+      await Skill.create({
+        user: mongoose.Types.ObjectId("65ad42fc08fa262b2b80d4c2"),
+        sequence: val.sequence,
+        name: val.name,
+        imageName: val.imageName,
+        imageURL: val.imageURL,
+        types: val.types.map((val) => val.type.$oid),
+      });
+    }
+
+    res.send("done");
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });

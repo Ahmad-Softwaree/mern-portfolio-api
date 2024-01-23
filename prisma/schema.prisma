@@ -1,0 +1,158 @@
+//generator client {
+//  provider = "prisma-client-js"
+//}
+
+//datasource db {
+//  provider = "mongodb"
+//  url      = env("DATABASE_URL")
+//}
+
+//enum Role {
+//  USER
+//  ADMIN
+//}
+//model User {
+//  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+//  name         String        @unique
+//  role         Role          @default(USER)
+//  email        String        @unique
+//  password     String        @unique
+//  imageName    String
+//  imageURL     String
+//  blogs        Blog[]
+//  certificates Certificate[]
+//  projects     Project[]
+//  skills       Skill[]
+//  works        Work[]
+//  @@unique([email,name])
+//}
+
+//model Stack {
+//  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+//  name           String
+//  color          String
+//  certificateIDs String[]      @db.ObjectId
+//  certificates   Certificate[] @relation(fields: [certificateIDs], references: [id])
+//  projectIDs     String[]      @db.ObjectId
+//  projects       Project[]     @relation(fields: [projectIDs], references: [id])
+//}
+
+//model Type {
+//  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+//  enName         String
+//  arName         String
+//  krName         String
+//  certificateIDs String[]      @db.ObjectId
+//  certificates   Certificate[] @relation(fields: [certificateIDs], references: [id])
+//  projectIDs     String[]      @db.ObjectId
+//  projects       Project[]     @relation(fields: [projectIDs], references: [id])
+//  skillIDs       String[]      @db.ObjectId
+//  skills         Skill[]       @relation(fields: [skillIDs], references: [id])
+//}
+
+//model Category {
+//  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+//  enName  String
+//  arName  String
+//  krName  String
+//  blogIDs String[] @db.ObjectId
+//  blogs   Blog[]   @relation(fields: [blogIDs], references: [id])
+//}
+
+//model Blog {
+//  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+//  user        User       @relation(fields: [userId], references: [id])
+//  userId      String     @unique @db.ObjectId
+//  enTitle     String     @unique
+//  arTitle     String     @unique
+//  krTitle     String     @unique
+//  enBody      String
+//  arBody      String
+//  krBody      String
+//  imageName   String
+//  imageURL    String
+//  categoryIDs String[]   @db.ObjectId
+//  categories  Category[] @relation(fields: [categoryIDs], references: [id])
+//}
+
+//model Certificate {
+//  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+//  user      User     @relation(fields: [userId], references: [id])
+//  userId    String   @unique @db.ObjectId
+//  enTitle   String   @unique
+//  arTitle   String   @unique
+//  krTitle   String   @unique
+//  enDesc    String
+//  arDesc    String
+//  krDesc    String
+//  imageName String
+//  imageURL  String
+//  url       String
+//  stackIDs  String[] @db.ObjectId
+//  stacks    Stack[]  @relation(fields: [stackIDs], references: [id])
+//  typeIDs   String[] @db.ObjectId
+//  types     Type[]   @relation(fields: [stackIDs], references: [id])
+//  date      DateTime
+//}
+
+//model Git {
+//  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+//  git        String
+//  name       String
+//  projectIDs String[]  @db.ObjectId
+//  projects   Project[] @relation(fields: [projectIDs], references: [id])
+//}
+
+//model Project {
+//  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+//  user      User     @relation(fields: [userId], references: [id])
+//  userId    String   @unique @db.ObjectId
+//  enTitle   String   @unique
+//  arTitle   String   @unique
+//  krTitle   String   @unique
+//  enDesc    String
+//  arDesc    String
+//  krDesc    String
+//  imageName String
+//  imageURL  String
+//  url       String
+//  gitIDs    String[] @db.ObjectId
+//  gits      Git[]    @relation(fields: [gitIDs], references: [id])
+//  stackIDs  String[] @db.ObjectId
+//  stacks    Stack[]  @relation(fields: [stackIDs], references: [id])
+//  typeIDs   String[] @db.ObjectId
+//  types     Type[]   @relation(fields: [stackIDs], references: [id])
+//  date      DateTime
+//}
+
+//model Skill {
+//  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+//  user      User     @relation(fields: [userId], references: [id])
+//  userId    String   @unique @db.ObjectId
+//  typeIDs   String[] @db.ObjectId
+//  types     Type[]   @relation(fields: [typeIDs], references: [id])
+//  name      String   @unique
+//  imageName String
+//  imageURL  String
+//}
+
+//model Work {
+//  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+//  user      User      @relation(fields: [userId], references: [id])
+//  userId    String    @unique @db.ObjectId
+//  enTitle   String    @unique
+//  arTitle   String    @unique
+//  krTitle   String    @unique
+//  link      String
+//  company   String
+//  imageName String
+//  imageURL  String
+//  from      DateTime?
+//  to        DateTime?
+//  continue  Boolean?
+//}
+
+//model Subscribe {
+//  id    String @id @default(auto()) @map("_id") @db.ObjectId
+//  email String @unique
+//}
