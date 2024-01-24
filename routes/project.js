@@ -12,10 +12,11 @@ import express from "express";
 import { body } from "express-validator";
 
 const projectRouter = express.Router();
-projectRouter.get("/search/:search", searchProject);
-
-projectRouter.get("/:category", getProjects);
 projectRouter.get("/one/:id", getProject);
+
+projectRouter.get("/search", searchProject);
+
+projectRouter.get("/:type/:stack", getProjects);
 
 projectRouter.post(
   "/",

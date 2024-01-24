@@ -13,12 +13,11 @@ import express from "express";
 import { body } from "express-validator";
 
 const blogRouter = express.Router();
-blogRouter.get("/search/:search", searchBlog);
+blogRouter.get("/search", searchBlog);
+blogRouter.get("/related/:category/:id", getRelatedBlogs);
+blogRouter.get("/one/:id", getBlog);
 
 blogRouter.get("/:category", getBlogs);
-blogRouter.get("/related/:category/:id", getRelatedBlogs);
-
-blogRouter.get("/one/:id", getBlog);
 
 blogRouter.post(
   "/",

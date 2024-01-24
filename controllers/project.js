@@ -3,13 +3,34 @@ import dotenv from "dotenv";
 dotenv.config();
 const { PAGINATION } = process.env;
 export const getProjects = async (req, res) => {
-  let category = req.params.category;
+  let type = req.params.type;
+  let stack = req.params.stack;
+
   let pages = req.query.pages;
   let offset = (pages - 1) * PAGINATION;
+  let findQuery = null;
+  if (type && type !== "default" && stack && stack !== "default") {
+    findQuery = {
+      $and: [
+        {
+          type: { $in: [type] },
+        },
+        {
+          stack: { $in: [stack] },
+        },
+      ],
+    };
+  } else if (stack && stack !== "default") {
+    findQuery = {
+      stack: { $in: [stack] },
+    };
+  } else if (type && type !== "default") {
+    findQuery = {
+      type: { $in: [type] },
+    };
+  }
   try {
-    let projects = await Project.find(
-      category !== "default" ? { categories: { $in: [category] } } : null
-    )
+    let projects = await Project.find(findQuery)
       .populate([
         {
           path: "user",
@@ -56,7 +77,7 @@ export const getProject = async (req, res) => {
   }
 };
 export const searchProject = async (req, res) => {
-  let search = req.params.search;
+  let search = req.query.search;
   let regex = { $regex: new RegExp(search, "i") };
   try {
     const projects = await Project.find({
