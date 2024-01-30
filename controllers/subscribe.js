@@ -14,7 +14,7 @@ export const addSubscriber = async (req, res) => {
     let subs = await Subscribe.create(req.body);
     return res
       .status(200)
-      .json({ data: subs, message: "You have Subscribed to Bester" });
+      .json({ data: subs, message: "You have Subscribed to Ahmad Software" });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
