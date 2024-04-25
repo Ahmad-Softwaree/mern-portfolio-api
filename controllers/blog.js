@@ -81,9 +81,7 @@ export const getBlog = async (req, res) => {
 
 export const searchBlog = async (req, res) => {
   let search = req.query.search;
-  console.log(search);
   let regex = { $regex: new RegExp(search, "i") };
-  console.log(regex);
   try {
     const blogs = await Blog.find({
       $or: [{ enTitle: regex }, { arTitle: regex }, { krTitle: regex }],

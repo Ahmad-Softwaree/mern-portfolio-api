@@ -12,7 +12,7 @@ import express from "express";
 import { body } from "express-validator";
 
 const certificateRouter = express.Router();
-certificateRouter.get("/search/:search", searchCertificate);
+certificateRouter.get("/search", searchCertificate);
 certificateRouter.get("/one/:id", getCertificate);
 
 certificateRouter.get("/:stack/:type", getCertificates);

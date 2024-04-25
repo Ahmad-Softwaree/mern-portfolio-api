@@ -67,7 +67,7 @@ export const getCertificate = async (req, res) => {
 };
 
 export const searchCertificate = async (req, res) => {
-  let search = req.params.search;
+  let search = req.query.search;
   let regex = { $regex: new RegExp(search, "i") };
   try {
     const certificates = await Certificate.find({
