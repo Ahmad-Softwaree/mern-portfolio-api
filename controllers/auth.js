@@ -15,8 +15,6 @@ export const getCurrentUser = async (req, res) => {
 export const login = async (req, res) => {
   try {
     let user = await User.findOne({ email: req.body.email });
-    console.log(user);
-    console.log(req.body.password);
 
     if (user && (await bcrypt.compare(req.body.password, user.password))) {
       return res.status(200).json({

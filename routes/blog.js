@@ -3,6 +3,7 @@ import {
   deleteBlog,
   getBlog,
   getBlogs,
+  getInfiniteBlogs,
   getRelatedBlogs,
   searchBlog,
   updateBlog,
@@ -17,7 +18,8 @@ blogRouter.get("/search", searchBlog);
 blogRouter.get("/related/:category/:id", getRelatedBlogs);
 blogRouter.get("/one/:id", getBlog);
 
-blogRouter.get("/:category", getBlogs);
+blogRouter.get("/infinite/:category", getInfiniteBlogs);
+blogRouter.get("/", getBlogs);
 
 blogRouter.post(
   "/",

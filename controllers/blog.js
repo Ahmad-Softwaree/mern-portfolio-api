@@ -2,7 +2,7 @@ import Blog from "../model/blog.js";
 import dotenv from "dotenv";
 dotenv.config();
 const { PAGINATION } = process.env;
-export const getBlogs = async (req, res) => {
+export const getInfiniteBlogs = async (req, res) => {
   let category = req.params.category;
   let pages = req.query.pages;
   let offset = (pages - 1) * PAGINATION;
@@ -23,6 +23,24 @@ export const getBlogs = async (req, res) => {
 
       .skip(offset)
       .limit(PAGINATION);
+
+    return res.status(200).json(blogs);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+export const getBlogs = async (req, res) => {
+  try {
+    let blogs = await Blog.find().populate([
+      {
+        path: "user",
+        select: ["name", "imageURL", "bio"],
+      },
+      {
+        path: "categories",
+        select: ["enName", "arName", "krName"],
+      },
+    ]);
 
     return res.status(200).json(blogs);
   } catch (error) {
