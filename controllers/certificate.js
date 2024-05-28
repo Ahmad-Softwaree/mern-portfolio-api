@@ -2,7 +2,7 @@ import Certificate from "../model/certificate.js";
 import dotenv from "dotenv";
 dotenv.config();
 const { PAGINATION } = process.env;
-export const getCertificates = async (req, res) => {
+export const getInfiniteCertificates = async (req, res) => {
   let stack = req.params.stack;
   let type = req.params.type;
 
@@ -33,11 +33,33 @@ export const getCertificates = async (req, res) => {
         },
         {
           path: "stacks",
-          select: ["enName", "color"],
+          select: ["enName", "color", "imageName", "imageURL"],
         },
       ])
       .skip(offset)
       .limit(PAGINATION);
+    return res.status(200).json(certificates);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+export const getCertificates = async (req, res) => {
+  try {
+    const certificates = await Certificate.find().populate([
+      {
+        path: "user",
+        select: ["name", "imageURL", "bio"],
+      },
+      {
+        path: "types",
+        select: ["enName", "arName", "krName"],
+      },
+      {
+        path: "stacks",
+        select: ["enName", "color", "imageName", "imageURL"],
+      },
+    ]);
+
     return res.status(200).json(certificates);
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -56,7 +78,7 @@ export const getCertificate = async (req, res) => {
       },
       {
         path: "stacks",
-        select: ["enName", "color"],
+        select: ["enName", "color", "imageName", "imageURL"],
       },
     ]);
 
@@ -84,7 +106,7 @@ export const searchCertificate = async (req, res) => {
         },
         {
           path: "stacks",
-          select: ["enName", "color"],
+          select: ["enName", "color", "imageName", "imageURL"],
         },
       ])
       .limit(30);

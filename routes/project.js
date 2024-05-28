@@ -1,6 +1,7 @@
 import {
   addProject,
   deleteProject,
+  getInfiniteProjects,
   getProject,
   getProjects,
   searchProject,
@@ -16,8 +17,8 @@ projectRouter.get("/one/:id", getProject);
 
 projectRouter.get("/search", searchProject);
 
-projectRouter.get("/:type/:stack", getProjects);
-
+projectRouter.get("/infinite/:type/:stack", getInfiniteProjects);
+projectRouter.get("/", getProjects);
 projectRouter.post(
   "/",
   userMiddleware,

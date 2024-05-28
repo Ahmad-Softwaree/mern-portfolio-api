@@ -2,7 +2,7 @@ import Project from "../model/project.js";
 import dotenv from "dotenv";
 dotenv.config();
 const { PAGINATION } = process.env;
-export const getProjects = async (req, res) => {
+export const getInfiniteProjects = async (req, res) => {
   let type = req.params.type;
   let stack = req.params.stack;
 
@@ -42,12 +42,48 @@ export const getProjects = async (req, res) => {
         },
         {
           path: "stacks",
-          select: ["enName", "arName", "krName", "color"],
+          select: [
+            "enName",
+            "arName",
+            "krName",
+            "color",
+            "imageName",
+            "imageURL",
+          ],
         },
       ])
 
       .skip(offset)
       .limit(PAGINATION);
+
+    return res.status(200).json(projects);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+export const getProjects = async (req, res) => {
+  try {
+    let projects = await Project.find().populate([
+      {
+        path: "user",
+        select: ["name", "imageURL", "bio"],
+      },
+      {
+        path: "types",
+        select: ["enName", "arName", "krName", "color"],
+      },
+      {
+        path: "stacks",
+        select: [
+          "enName",
+          "arName",
+          "krName",
+          "color",
+          "imageName",
+          "imageURL",
+        ],
+      },
+    ]);
 
     return res.status(200).json(projects);
   } catch (error) {
@@ -67,7 +103,14 @@ export const getProject = async (req, res) => {
       },
       {
         path: "stacks",
-        select: ["enName", "arName", "krName", "color"],
+        select: [
+          "enName",
+          "arName",
+          "krName",
+          "color",
+          "imageName",
+          "imageURL",
+        ],
       },
     ]);
 
@@ -94,7 +137,14 @@ export const searchProject = async (req, res) => {
         },
         {
           path: "stacks",
-          select: ["enName", "arName", "krName", "color"],
+          select: [
+            "enName",
+            "arName",
+            "krName",
+            "color",
+            "imageName",
+            "imageURL",
+          ],
         },
       ])
 

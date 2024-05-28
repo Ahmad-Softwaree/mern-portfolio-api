@@ -3,6 +3,7 @@ import {
   deleteCertificate,
   getCertificate,
   getCertificates,
+  getInfiniteCertificates,
   searchCertificate,
   updateCertificate,
 } from "../controllers/certificate.js";
@@ -15,7 +16,8 @@ const certificateRouter = express.Router();
 certificateRouter.get("/search", searchCertificate);
 certificateRouter.get("/one/:id", getCertificate);
 
-certificateRouter.get("/:stack/:type", getCertificates);
+certificateRouter.get("/infinite/:stack/:type", getInfiniteCertificates);
+certificateRouter.get("/", getCertificates);
 
 certificateRouter.post(
   "/",

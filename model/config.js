@@ -15,6 +15,14 @@ const ConfigSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    imageName: {
+      type: String,
+      default: "",
+    },
+    imageURL: {
+      type: String,
+      default: "",
+    },
     color: {
       type: String,
     },
